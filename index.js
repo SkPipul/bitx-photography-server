@@ -17,6 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     try{
         const photographyCollection = client.db('bitx').collection('photography');
+        const reviewCollection = client.db('bitx').collection('review')
 
         app.get('/services', async(req, res) => {
             const query = {};
@@ -44,6 +45,44 @@ async function run(){
             const query = {_id: ObjectId(id)};
             const service = await photographyCollection.findOne(query);
             res.send(service)
+        })
+
+        app.get('/allReviews', async(req, res) => {
+            let query = {};
+            if(req.query.email){
+                query = {
+                    email: req.query.email
+                }
+            }
+            const cursor = reviewCollection.find(query)
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        })
+
+        app.get('/reviews', async(req, res) => {
+            // const url = req.query.url
+            let query = {};
+            if(req.query.url){
+                query = {
+                    url : req.query.url
+                }
+            }
+            const cursor = reviewCollection.find(query);
+            const review = await cursor.toArray();
+            res.send(review);
+        })
+
+        app.post('/reviews', async(req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        })
+
+        app.delete('/allReviews/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id)}
+            const result = await reviewCollection.deleteOne(query)
+            res.send(result)
         })
 
     }
