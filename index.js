@@ -19,6 +19,7 @@ async function run(){
         const photographyCollection = client.db('bitx').collection('photography');
         const reviewCollection = client.db('bitx').collection('review')
 
+        // getting limited data 
         app.get('/services', async(req, res) => {
             const query = {};
             const cursor = photographyCollection.find(query);
@@ -26,7 +27,7 @@ async function run(){
             res.send(services);
         })
 
-
+        // all services api
         app.get('/allServices', async(req, res) => {
             const query = {};
             const cursor = photographyCollection.find(query);
@@ -47,6 +48,7 @@ async function run(){
             res.send(service)
         })
 
+        // getting all of the reviews
         app.get('/allReviews', async(req, res) => {
             let query = {};
             if(req.query.email){
@@ -78,6 +80,7 @@ async function run(){
             res.send(result);
         })
 
+        // delete method
         app.delete('/allReviews/:id', async(req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id)}
